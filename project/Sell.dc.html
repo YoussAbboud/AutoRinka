@@ -26,7 +26,7 @@ select,input,textarea{font-family:'Manrope',sans-serif}
   </header>
   <div style="max-width:760px;margin:0 auto;padding:40px 24px 90px">
     <h1 style="font-size:30px;font-weight:800;letter-spacing:-0.7px;margin:0 0 6px">Sell your car</h1>
-    <p style="font-size:14px;color:#50565E;margin:0 0 30px">Four quick steps. Your draft saves automatically as you go.</p>
+    <p style="font-size:14px;color:#50565E;margin:0 0 30px">Five quick steps. Your draft saves automatically as you go.</p>
     <div style="display:flex;gap:8px;margin-bottom:34px">
       <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4">
         <div onClick="{{ s.go }}" style="flex:1;cursor:pointer">
@@ -37,51 +37,104 @@ select,input,textarea{font-family:'Manrope',sans-serif}
     </div>
     <!-- Step 1: Vehicle -->
     <sc-if value="{{ isStep1 }}" hint-placeholder-val="{{ true }}">
+      <div style="background:#EAF6EE;border:1px solid #CBE8D4;border-radius:16px;padding:22px 26px;margin-bottom:16px;display:grid;grid-template-columns:1fr 1.2fr;gap:26px;align-items:center">
+        <div>
+          <span style="display:inline-block;background:#2BB673;color:#fff;font-size:11px;font-weight:800;border-radius:6px;padding:5px 11px;letter-spacing:.5px;margin-bottom:10px">SIMPLE AND QUICK</span>
+          <div style="font-size:13.5px;color:#2A4A36;font-weight:600;line-height:1.55">Enter the VIN code and we'll fill in the vehicle details automatically. Verified VINs get a free history-check button on your listing.</div>
+        </div>
+        <div>
+          <div style="font-size:12.5px;font-weight:700;color:#2A4A36;margin-bottom:6px">VIN code</div>
+          <div style="display:flex;gap:8px">
+            <input value="{{ vinInput }}" onChange="{{ setVinInput }}" placeholder="e.g. WAUZZZ4G7FN012345" style="flex:1;border:1px solid #CBE8D4;border-radius:10px;padding:11px 12px;font-size:13.5px;font-weight:700;outline:none;letter-spacing:.5px;text-transform:uppercase;min-width:0">
+            <span onClick="{{ decodeVin }}" style="background:#2BB673;color:#fff;font-size:13px;font-weight:700;border-radius:10px;padding:12px 18px;cursor:pointer;white-space:nowrap;align-self:center">Auto-fill</span>
+          </div>
+          <div style="font-size:12px;font-weight:700;margin-top:8px;min-height:16px;color:{{ vinMsgColor }}">{{ vinMsg }}</div>
+          <sc-if value="{{ vinVerified }}" hint-placeholder-val="{{ false }}">
+            <a href="{{ vinHistoryHref }}" target="_blank" style="font-size:12px;font-weight:700;color:#1D7A4F;text-decoration:underline">View history report on autoistorija.lt ↗</a>
+          </sc-if>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
+        <span style="flex:1;height:1px;background:#E1E4EB"></span>
+        <span style="font-size:12px;font-weight:800;color:#9AA1AC;letter-spacing:1px">OR FILL IN MANUALLY</span>
+        <span style="flex:1;height:1px;background:#E1E4EB"></span>
+      </div>
       <div style="background:#fff;border:1px solid #E1E4EB;border-radius:16px;padding:30px;display:grid;grid-template-columns:1fr 1fr;gap:18px 20px">
-        <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">Make
+        <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">Make <span style="color:#D42B2B">*</span>
           <select onChange="{{ setMake }}" value="{{ v.make }}" style="width:100%;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600;outline:none;background:#fff;margin-top:6px;color:#050B20;box-sizing:border-box">
             <option value="">Select make…</option>
             <sc-for list="{{ makes }}" as="m" hint-placeholder-count="5"><option value="{{ m }}">{{ m }}</option></sc-for>
           </select>
         </label>
-        <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">Model
+        <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">Model <span style="color:#D42B2B">*</span>
           <select onChange="{{ setModel }}" value="{{ v.model }}" style="width:100%;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600;outline:none;background:#fff;margin-top:6px;color:#050B20;box-sizing:border-box">
             <option value="">Select model…</option>
             <sc-for list="{{ models }}" as="m"><option value="{{ m }}">{{ m }}</option></sc-for>
           </select>
         </label>
-        <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">Year
-          <input onChange="{{ set.year }}" value="{{ v.year }}" placeholder="2020" inputMode="numeric" style="width:100%;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600;outline:none;margin-top:6px;box-sizing:border-box">
-        </label>
-        <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">Body type
+        <div style="font-size:12.5px;font-weight:700;color:#50565E">First registration <span style="color:#D42B2B">*</span>
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <input onChange="{{ set.year }}" value="{{ v.year }}" placeholder="Year, e.g. 2020" inputMode="numeric" style="flex:1.4;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600;outline:none;box-sizing:border-box;min-width:0">
+            <select onChange="{{ set.month }}" value="{{ v.month }}" style="flex:1;border:1px solid #E1E4EB;border-radius:10px;padding:11px 8px;font-size:14px;font-weight:600;outline:none;background:#fff;color:#050B20;box-sizing:border-box">
+              <option value="">Month</option>
+              <sc-for list="{{ months }}" as="mo"><option value="{{ mo }}">{{ mo }}</option></sc-for>
+            </select>
+          </div>
+        </div>
+        <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">Body type <span style="color:#D42B2B">*</span>
           <select onChange="{{ set.body }}" value="{{ v.body }}" style="width:100%;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600;outline:none;background:#fff;margin-top:6px;color:#050B20;box-sizing:border-box">
             <option value="">Select…</option>
             <sc-for list="{{ bodyTypes }}" as="b"><option value="{{ b }}">{{ b }}</option></sc-for>
           </select>
         </label>
-        <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">Fuel
+        <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">Fuel <span style="color:#D42B2B">*</span>
           <select onChange="{{ set.fuel }}" value="{{ v.fuel }}" style="width:100%;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600;outline:none;background:#fff;margin-top:6px;color:#050B20;box-sizing:border-box">
             <option value="">Select…</option>
             <sc-for list="{{ fuels }}" as="fu"><option value="{{ fu }}">{{ fu }}</option></sc-for>
           </select>
         </label>
-        <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">Gearbox
+        <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">Gearbox <span style="color:#D42B2B">*</span>
           <select onChange="{{ set.gearbox }}" value="{{ v.gearbox }}" style="width:100%;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600;outline:none;background:#fff;margin-top:6px;color:#050B20;box-sizing:border-box">
             <option value="">Select…</option><option>Manual</option><option>Automatic</option>
           </select>
         </label>
-        <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">Mileage (km)
+        <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">Mileage (km) <span style="color:#D42B2B">*</span>
           <input onChange="{{ set.km }}" value="{{ v.km }}" placeholder="85 000" inputMode="numeric" style="width:100%;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600;outline:none;margin-top:6px;box-sizing:border-box">
         </label>
-        <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">Power (kW)
+        <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">Power (kW) <span style="color:#D42B2B">*</span>
           <input onChange="{{ set.kw }}" value="{{ v.kw }}" placeholder="110" inputMode="numeric" style="width:100%;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600;outline:none;margin-top:6px;box-sizing:border-box">
-        </label>
-        <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">VIN (optional)
-          <input onChange="{{ set.vin }}" value="{{ v.vin }}" placeholder="WVWZZZ…" style="width:100%;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600;outline:none;margin-top:6px;box-sizing:border-box">
         </label>
         <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">TA valid until
           <input onChange="{{ set.ta }}" value="{{ v.ta }}" placeholder="2027-04-01" style="width:100%;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600;outline:none;margin-top:6px;box-sizing:border-box">
         </label>
+        <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">Engine capacity, cc
+          <input onChange="{{ set.cc }}" value="{{ v.cc }}" placeholder="1 968" inputMode="numeric" style="width:100%;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600;outline:none;margin-top:6px;box-sizing:border-box">
+        </label>
+        <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">Color
+          <select onChange="{{ set.color }}" value="{{ v.color }}" style="width:100%;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600;outline:none;background:#fff;margin-top:6px;color:#050B20;box-sizing:border-box">
+            <option value="">Select…</option>
+            <sc-for list="{{ colorNames }}" as="co"><option value="{{ co }}">{{ co }}</option></sc-for>
+          </select>
+        </label>
+        <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">Damage
+          <select onChange="{{ set.damage }}" value="{{ v.damage }}" style="width:100%;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600;outline:none;background:#fff;margin-top:6px;color:#050B20;box-sizing:border-box">
+            <option>No damages</option><option>Slight damage</option><option>Damaged</option><option>Not working</option>
+          </select>
+        </label>
+        <div style="font-size:12.5px;font-weight:700;color:#50565E">Number of doors
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <sc-for list="{{ doorOpts }}" as="d" hint-placeholder-count="3">
+              <span onClick="{{ d.pick }}" style="flex:1;text-align:center;border:{{ d.ring }};background:{{ d.fill }};color:{{ d.color }};border-radius:10px;padding:11px 0;font-size:13.5px;font-weight:700;cursor:pointer">{{ d.label }}</span>
+            </sc-for>
+          </div>
+        </div>
+        <div style="font-size:12.5px;font-weight:700;color:#50565E">Steering wheel
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <sc-for list="{{ wheelOpts }}" as="w" hint-placeholder-count="2">
+              <span onClick="{{ w.pick }}" style="flex:1;text-align:center;border:{{ w.ring }};background:{{ w.fill }};color:{{ w.color }};border-radius:10px;padding:11px 0;font-size:13.5px;font-weight:700;cursor:pointer">{{ w.label }}</span>
+            </sc-for>
+          </div>
+        </div>
       </div>
     </sc-if>
     <!-- Step 2: Photos -->
@@ -103,38 +156,133 @@ select,input,textarea{font-family:'Manrope',sans-serif}
     <sc-if value="{{ isStep3 }}" hint-placeholder-val="{{ false }}">
       <div style="background:#fff;border:1px solid #E1E4EB;border-radius:16px;padding:30px;display:flex;flex-direction:column;gap:18px">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-          <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">Price (EUR)
+          <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">Price in Lithuania, with taxes, € <span style="color:#D42B2B">*</span>
             <input onChange="{{ set.price }}" value="{{ v.price }}" placeholder="18 900" inputMode="numeric" style="width:100%;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600;outline:none;margin-top:6px;box-sizing:border-box">
           </label>
-          <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">City
-            <select onChange="{{ set.city }}" value="{{ v.city }}" style="width:100%;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600;outline:none;background:#fff;margin-top:6px;color:#050B20;box-sizing:border-box">
-              <option value="">Select city…</option>
-              <sc-for list="{{ cities }}" as="c"><option value="{{ c }}">{{ c }}</option></sc-for>
-            </select>
-          </label>
+          <div></div>
         </div>
         <label onClick="{{ toggleNegotiable }}" style="display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:600;cursor:pointer">
           <span style="width:34px;height:20px;border-radius:99px;background:{{ negBg }};position:relative;transition:background .15s"><span style="position:absolute;top:2px;left:{{ negDot }};width:16px;height:16px;border-radius:99px;background:#fff;transition:left .15s"></span></span>
           Price is negotiable
         </label>
-        <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">Description (Lithuanian)
-          <textarea onChange="{{ set.descLt }}" placeholder="Aprašykite automobilį…" style="width:100%;min-height:80px;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;font-size:14px;outline:none;margin-top:6px;box-sizing:border-box;resize:vertical">{{ v.descLt }}</textarea>
+        <label onClick="{{ toggleVat }}" style="display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:700;color:#405FF2;cursor:pointer">
+          <span style="width:18px;height:18px;border-radius:5px;border:{{ vatRing }};background:{{ vatFill }};box-sizing:border-box;color:#fff;font-size:12px;line-height:16px;text-align:center">{{ vatCheck }}</span>
+          Show additional price excl. VAT
+        </label>
+        <sc-if value="{{ vatShow }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:140px 1fr;gap:20px">
+            <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">VAT rate
+              <select onChange="{{ setVatRate }}" value="{{ vatRate }}" style="width:100%;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600;outline:none;background:#fff;margin-top:6px;color:#050B20;box-sizing:border-box">
+                <option value="21">21 %</option><option value="9">9 %</option><option value="0">0 %</option>
+              </select>
+            </label>
+            <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">Price without VAT
+              <div style="display:flex;align-items:center;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;margin-top:6px;background:#FAFBFC;font-size:14px;font-weight:600;color:#050B20;justify-content:space-between">{{ priceExVat }}<span style="color:#9AA1AC">€</span></div>
+            </label>
+          </div>
+        </sc-if>
+        <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">Description (Lithuanian) <span style="color:#D42B2B">*</span>
+          <textarea onChange="{{ set.descLt }}" value="{{ v.descLt }}" placeholder="Aprašykite automobilį…" style="width:100%;min-height:80px;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;font-size:14px;outline:none;margin-top:6px;box-sizing:border-box;resize:vertical"></textarea>
         </label>
         <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">Description (English, optional)
-          <textarea onChange="{{ set.descEn }}" placeholder="Describe the car…" style="width:100%;min-height:80px;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;font-size:14px;outline:none;margin-top:6px;box-sizing:border-box;resize:vertical">{{ v.descEn }}</textarea>
+          <textarea onChange="{{ set.descEn }}" value="{{ v.descEn }}" placeholder="Describe the car…" style="width:100%;min-height:80px;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;font-size:14px;outline:none;margin-top:6px;box-sizing:border-box;resize:vertical"></textarea>
         </label>
         <div>
-          <div style="font-size:12.5px;font-weight:700;color:#50565E;margin-bottom:10px">Options</div>
-          <div style="display:flex;flex-wrap:wrap;gap:8px">
-            <sc-for list="{{ optionChips }}" as="o" hint-placeholder-count="8">
-              <span onClick="{{ o.toggle }}" style="border:{{ o.ring }};background:{{ o.fill }};color:{{ o.color }};border-radius:99px;padding:8px 15px;font-size:13px;font-weight:600;cursor:pointer">{{ o.label }}</span>
+          <div style="font-size:14px;font-weight:800;color:#050B20;margin-bottom:14px">Technical condition</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{ condRows }}" as="cr" hint-placeholder-count="7">
+              <div style="display:grid;grid-template-columns:200px 1fr;gap:16px;align-items:center">
+                <span style="font-size:13px;font-weight:700;color:#3A4048;white-space:nowrap">{{ cr.label }}</span>
+                <div style="display:flex;gap:6px">
+                  <sc-for list="{{ cr.opts }}" as="op">
+                    <span onClick="{{ op.pick }}" style="flex:1;text-align:center;border:{{ op.ring }};background:{{ op.fill }};color:{{ op.color }};border-radius:9px;padding:10px 0;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap" style-hover="border-color:#405FF2">{{ op.label }}</span>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+            <div style="display:grid;grid-template-columns:200px 1fr;gap:16px;align-items:center;border-top:1px solid #F3F5F8;padding-top:14px;margin-top:4px">
+              <span style="font-size:13px;font-weight:700;color:#3A4048">Other</span>
+              <div style="display:flex;gap:28px">
+                <label onClick="{{ toggleWasDamaged }}" style="display:flex;align-items:center;gap:9px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap">
+                  <span style="width:18px;height:18px;border-radius:5px;border:{{ wdRing }};background:{{ wdFill }};box-sizing:border-box;color:#fff;font-size:12px;line-height:16px;text-align:center;flex-shrink:0">{{ wdCheck }}</span>Was damaged
+                </label>
+                <label onClick="{{ toggleRepainted }}" style="display:flex;align-items:center;gap:9px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap">
+                  <span style="width:18px;height:18px;border-radius:5px;border:{{ rpRing }};background:{{ rpFill }};box-sizing:border-box;color:#fff;font-size:12px;line-height:16px;text-align:center;flex-shrink:0">{{ rpCheck }}</span>Repainted
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:12.5px;font-weight:700;color:#50565E;margin-bottom:6px">Text search of features</div>
+          <input value="{{ featQuery }}" onChange="{{ setFeatQuery }}" placeholder="Enter a feature…" style="width:100%;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;font-size:13.5px;font-weight:600;outline:none;box-sizing:border-box;margin-bottom:16px">
+          <div style="font-size:12.5px;font-weight:700;color:#50565E;margin-bottom:10px">Choose features from the list <span style="font-weight:600;color:#9AA1AC">· {{ featTotal }} selected</span></div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <sc-for list="{{ featCats }}" as="fc" hint-placeholder-count="8">
+              <div style="border:1px solid #E1E4EB;border-radius:12px;overflow:hidden">
+                <div onClick="{{ fc.toggleOpen }}" style="display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;background:#fff">
+                  <span style="width:20px;height:20px;border-radius:99px;border:1.5px solid #405FF2;color:#405FF2;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">{{ fc.arrow }}</span>
+                  <div style="flex:1;min-width:0">
+                    <div style="font-size:13.5px;font-weight:800">{{ fc.name }}</div>
+                    <div style="font-size:11.5px;color:#50565E;font-weight:600">{{ fc.desc }}</div>
+                  </div>
+                  <span style="background:{{ fc.countBg }};color:{{ fc.countFg }};font-size:11.5px;font-weight:800;border-radius:7px;padding:5px 10px;flex-shrink:0">{{ fc.count }}</span>
+                </div>
+                <sc-if value="{{ fc.open }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-wrap:wrap;gap:8px;padding:4px 16px 16px;border-top:1px solid #F3F5F8;background:#FAFBFC;padding-top:14px">
+                    <sc-for list="{{ fc.items }}" as="o">
+                      <span onClick="{{ o.toggle }}" style="border:{{ o.ring }};background:{{ o.fill }};color:{{ o.color }};border-radius:99px;padding:8px 15px;font-size:13px;font-weight:600;cursor:pointer">{{ o.label }}</span>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
             </sc-for>
           </div>
         </div>
       </div>
     </sc-if>
-    <!-- Step 4: Package & Pay -->
+    <!-- Step 4: Contacts -->
     <sc-if value="{{ isStep4 }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#fff;border:1px solid #E1E4EB;border-radius:16px;padding:30px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px 20px">
+        <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">Country <span style="color:#D42B2B">*</span>
+          <select onChange="{{ set.country }}" value="{{ v.country }}" style="width:100%;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600;outline:none;background:#fff;margin-top:6px;color:#050B20;box-sizing:border-box">
+            <option>Lietuva</option><option>Latvija</option><option>Estija</option><option>Lenkija</option>
+          </select>
+        </label>
+        <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">City <span style="color:#D42B2B">*</span>
+          <select onChange="{{ set.city }}" value="{{ v.city }}" style="width:100%;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600;outline:none;background:#fff;margin-top:6px;color:#050B20;box-sizing:border-box">
+            <option value="">Select city…</option>
+            <sc-for list="{{ cities }}" as="c"><option value="{{ c }}">{{ c }}</option></sc-for>
+          </select>
+        </label>
+        <label style="font-size:12.5px;font-weight:700;color:#50565E;display:block">E-mail
+          <input onChange="{{ set.email }}" value="{{ v.email }}" style="width:100%;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600;outline:none;margin-top:6px;box-sizing:border-box">
+        </label>
+      </div>
+      <div style="background:#EAF6EE;border:1px solid #CBE8D4;border-radius:16px;padding:24px 26px;margin-top:16px;display:grid;grid-template-columns:1fr 1.3fr;gap:30px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <label style="font-size:12.5px;font-weight:700;color:#2A4A36;display:block">Contact phone <span style="color:#D42B2B">*</span>
+            <input onChange="{{ set.contactPhone }}" value="{{ v.contactPhone }}" placeholder="+370 6XX XX XXX" style="width:100%;border:1px solid #CBE8D4;border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600;outline:none;margin-top:6px;box-sizing:border-box;background:#fff">
+          </label>
+          <label style="font-size:12.5px;font-weight:700;color:#2A4A36;display:block">Additional phone
+            <input onChange="{{ set.phone2 }}" value="{{ v.phone2 }}" placeholder="+370 6XX XX XXX" style="width:100%;border:1px solid #CBE8D4;border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600;outline:none;margin-top:6px;box-sizing:border-box;background:#fff">
+          </label>
+        </div>
+        <div style="font-size:12.5px;color:#2A4A36;font-weight:600;line-height:1.65">
+          <b>Virtual number</b> — protection for your phone number! When placing an ad, we activate free protection of your personal number by assigning a virtual AutoRinka number to it. This helps avoid unwanted or fraudulent calls after the transaction.<br>If you provide two numbers, the virtual number redirects the call to the second one if the first is not answered.<br><span style="color:#1D7A4F;text-decoration:underline;cursor:pointer">More information</span>
+        </div>
+      </div>
+      <div style="background:#fff;border:1px solid #E1E4EB;border-radius:16px;padding:24px 26px;margin-top:16px;display:flex;flex-direction:column;gap:14px">
+        <sc-for list="{{ contactChecks }}" as="cc" hint-placeholder-count="3">
+          <label onClick="{{ cc.toggle }}" style="display:flex;align-items:center;gap:11px;font-size:13.5px;font-weight:600;cursor:pointer">
+            <span style="width:18px;height:18px;border-radius:5px;border:{{ cc.ring }};background:{{ cc.fill }};box-sizing:border-box;color:#fff;font-size:12px;line-height:16px;text-align:center;flex-shrink:0">{{ cc.check }}</span>
+            <span>{{ cc.label }} <span style="color:#9AA1AC;font-weight:500">{{ cc.hint }}</span><sc-if value="{{ cc.req }}" hint-placeholder-val="{{ false }}"><span style="color:#D42B2B"> *</span></sc-if></span>
+          </label>
+        </sc-for>
+      </div>
+    </sc-if>
+    <!-- Step 5: Package & Pay -->
+    <sc-if value="{{ isStep5 }}" hint-placeholder-val="{{ false }}">
       <sc-if value="{{ notDone }}" hint-placeholder-val="{{ true }}">
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
           <sc-for list="{{ tiers }}" as="t" hint-placeholder-count="3">
@@ -177,16 +325,22 @@ select,input,textarea{font-family:'Manrope',sans-serif}
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
   state = {
-    data: null, step: 0, done: false, tier: "plus", photos: 0,
-    v: { make: "", model: "", year: "", body: "", fuel: "", gearbox: "", km: "", kw: "", vin: "", ta: "", price: "", city: "", descLt: "", descEn: "", negotiable: true, options: [] }
+    data: null, step: 0, done: false, tier: "plus", photos: 0, vinInput: "", vinStatus: null, featQuery: "", openCats: [],
+    cond: {}, wasDamaged: false, repainted: false, vatShow: false, vatRate: "21",
+    v: { make: "", model: "", year: "", month: "", body: "", fuel: "", gearbox: "", km: "", kw: "", cc: "", vin: "", ta: "", color: "", damage: "No damages", doors: "", wheel: "LHD", price: "", city: "", descLt: "", descEn: "", negotiable: true, options: [], country: "Lietuva", email: "tomas.k@gmail.com", contactPhone: "", phone2: "", business: false, news: false, agree: false }
   };
   componentDidMount() { import("./data.js").then(d => this.setState({ data: d })); }
   setV(patch) { this.setState({ v: { ...this.state.v, ...patch } }); }
   renderVals() {
     const { data, step, done, tier, photos, v } = this.state;
-    const labels = ["1 · Vehicle", "2 · Photos", "3 · Details", "4 · Package & Pay"];
+    const labels = ["1 · Vehicle", "2 · Photos", "3 · Details", "4 · Contacts", "5 · Package & Pay"];
     const set = {};
-    ["year", "body", "fuel", "gearbox", "km", "kw", "vin", "ta", "price", "city", "descLt", "descEn"].forEach(k => { set[k] = e => this.setV({ [k]: e.target.value }); });
+    ["year", "month", "body", "fuel", "gearbox", "km", "kw", "cc", "vin", "ta", "color", "damage", "price", "city", "descLt", "descEn", "country", "email", "contactPhone", "phone2"].forEach(k => { set[k] = e => this.setV({ [k]: e.target.value }); });
+    const seg = (key, val) => ({
+      label: val, ring: v[key] === val ? "1.5px solid #405FF2" : "1px solid #E1E4EB",
+      fill: v[key] === val ? "#405FF2" : "#fff", color: v[key] === val ? "#fff" : "#050B20",
+      pick: () => this.setV({ [key]: val })
+    });
     const tierDefs = [
       { key: "standard", name: "Standard", price: "€9.99", features: "Live for 30 days · standard card · renew any time" },
       { key: "plus", name: "Plus", price: "€19.99", popular: true, features: "Highlighted card styling · 1 bump to top · 30 days" },
@@ -194,7 +348,7 @@ class Component extends DCLogic {
     ];
     return {
       v, set, done, notDone: !done,
-      isStep1: step === 0, isStep2: step === 1, isStep3: step === 2, isStep4: step === 3,
+      isStep1: step === 0, isStep2: step === 1, isStep3: step === 2, isStep4: step === 3, isStep5: step === 4,
       steps: labels.map((label, i) => ({
         label, bar: i <= step ? "#405FF2" : "#E1E4EB", color: i <= step ? "#050B20" : "#9AA1AC",
         go: () => !done && this.setState({ step: i })
@@ -204,6 +358,24 @@ class Component extends DCLogic {
       bodyTypes: data ? data.BODY_TYPES : [], fuels: data ? [...data.FUELS, "LPG"] : [], cities: data ? data.CITIES : [],
       setMake: e => this.setV({ make: e.target.value, model: "" }),
       setModel: e => this.setV({ model: e.target.value }),
+      months: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
+      colorNames: data ? [...data.COLORS.map(c => c[0]), "Other"] : [],
+      doorOpts: ["2/3", "4/5", "Other"].map(x => seg("doors", x)),
+      wheelOpts: ["LHD", "RHD"].map(x => seg("wheel", x)),
+      vinInput: this.state.vinInput,
+      setVinInput: e => this.setState({ vinInput: e.target.value.toUpperCase(), vinStatus: null }),
+      decodeVin: () => {
+        const vin = this.state.vinInput.trim().toUpperCase();
+        if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) { this.setState({ vinStatus: "bad" }); return; }
+        let h = 0; for (const ch of vin) h = (h * 31 + ch.charCodeAt(0)) % 997;
+        const src = data.LISTINGS[h % data.LISTINGS.length];
+        this.setState({ vinStatus: "ok" });
+        this.setV({ vin, make: src.make, model: src.model, year: String(src.year), body: src.body, fuel: src.fuel, gearbox: src.gearbox, kw: String(src.kw), color: src.color, doors: "4/5" });
+      },
+      vinVerified: this.state.vinStatus === "ok",
+      vinHistoryHref: "https://autoistorija.lt/?vin=" + this.state.vinInput.trim().toUpperCase(),
+      vinMsg: this.state.vinStatus === "ok" ? "✓ VIN verified — details filled in below. A history-check button will appear on your listing." : this.state.vinStatus === "bad" ? "VIN must be 17 characters (letters I, O, Q are never used). Check and try again." : "",
+      vinMsgColor: this.state.vinStatus === "bad" ? "#B4232A" : "#1D7A4F",
       photoSlots: Array.from({ length: 8 }, (_, i) => i < photos ? {
         bg: data ? data.stripe(i + 3) : "#EEF0F4", border: "1px solid #E1E4EB", label: "", color: "#7A8494", cover: i === 0,
         click: () => this.setState({ photos: photos - (i === photos - 1 ? 1 : 0) })
@@ -214,16 +386,61 @@ class Component extends DCLogic {
       photoHint: photos >= 3 ? { text: "✓ " + photos + " photos added", color: "#2BB673" } : { text: photos + "/3 minimum — add " + (3 - photos) + " more", color: "#D97706" },
       negBg: v.negotiable ? "#405FF2" : "#C6CBD4", negDot: v.negotiable ? "16px" : "2px",
       toggleNegotiable: () => this.setV({ negotiable: !v.negotiable }),
-      optionChips: (data ? data.OPTIONS : []).map(o => {
-        const on = v.options.includes(o);
-        return { label: o, ring: on ? "1.5px solid #405FF2" : "1px solid #E1E4EB", fill: on ? "#E9F2FF" : "#fff", color: on ? "#405FF2" : "#3A4048",
-          toggle: () => this.setV({ options: on ? v.options.filter(x => x !== o) : [...v.options, o] }) };
+      vatShow: this.state.vatShow, vatRate: this.state.vatRate,
+      vatRing: this.state.vatShow ? "1.5px solid #405FF2" : "1.5px solid #C6CBD4", vatFill: this.state.vatShow ? "#405FF2" : "#fff", vatCheck: this.state.vatShow ? "✓" : "",
+      toggleVat: () => this.setState({ vatShow: !this.state.vatShow }),
+      setVatRate: e => this.setState({ vatRate: e.target.value }),
+      priceExVat: (() => { const p = parseFloat(String(v.price).replace(/\s/g, "")); return p ? Math.round(p / (1 + Number(this.state.vatRate) / 100)).toLocaleString("lt-LT") : "—"; })(),
+      condRows: [["Engine and gearbox", "engine"], ["Chassis", "chassis"], ["Body", "bodyCond"], ["Condition of the glass", "glass"], ["Condition of the interior", "interior"], ["Electronics", "electronics"], ["General condition", "general"]].map(([label, key]) => ({
+        label,
+        opts: ["Poor", "Average", "Good", "Excellent"].map(o => {
+          const on = this.state.cond[key] === o;
+          return {
+            label: o, ring: on ? "1.5px solid #405FF2" : "1px solid #E1E4EB",
+            fill: on ? "#405FF2" : "#fff", color: on ? "#fff" : "#50565E",
+            pick: () => this.setState({ cond: { ...this.state.cond, [key]: on ? undefined : o } })
+          };
+        })
+      })),
+      wdRing: this.state.wasDamaged ? "1.5px solid #405FF2" : "1.5px solid #C6CBD4", wdFill: this.state.wasDamaged ? "#405FF2" : "#fff", wdCheck: this.state.wasDamaged ? "✓" : "",
+      toggleWasDamaged: () => this.setState({ wasDamaged: !this.state.wasDamaged }),
+      rpRing: this.state.repainted ? "1.5px solid #405FF2" : "1.5px solid #C6CBD4", rpFill: this.state.repainted ? "#405FF2" : "#fff", rpCheck: this.state.repainted ? "✓" : "",
+      toggleRepainted: () => this.setState({ repainted: !this.state.repainted }),
+      contactChecks: [
+        { key: "business", label: "Check if you are selling as a business", hint: "(vehicles, parts, or other automotive products)", req: false },
+        { key: "news", label: "AutoRinka news and offers", hint: "", req: false },
+        { key: "agree", label: "I agree with the AutoRinka rules and have read the privacy policy", hint: "", req: true }
+      ].map(c => {
+        const on = v[c.key];
+        return { ...c, ring: on ? "1.5px solid #405FF2" : "1.5px solid #C6CBD4", fill: on ? "#405FF2" : "#fff", check: on ? "✓" : "",
+          toggle: () => this.setV({ [c.key]: !on }) };
       }),
+      featQuery: this.state.featQuery,
+      setFeatQuery: e => this.setState({ featQuery: e.target.value }),
+      featTotal: v.options.length,
+      featCats: (data ? data.FEATURES : []).map(([name, desc, items]) => {
+        const q = this.state.featQuery.trim().toLowerCase();
+        const shown = q ? items.filter(x => x.toLowerCase().includes(q)) : items;
+        if (q && !shown.length) return null;
+        const picked = items.filter(x => v.options.includes(x)).length;
+        const open = q ? true : this.state.openCats.includes(name);
+        return {
+          name, desc, open, arrow: open ? "−" : "+",
+          count: picked + " / " + items.length,
+          countBg: picked ? "#E9F2FF" : "#F3F5F8", countFg: picked ? "#405FF2" : "#50565E",
+          toggleOpen: () => this.setState({ openCats: open ? this.state.openCats.filter(x => x !== name) : [...this.state.openCats, name] }),
+          items: shown.map(o => {
+            const on = v.options.includes(o);
+            return { label: o, ring: on ? "1.5px solid #405FF2" : "1px solid #E1E4EB", fill: on ? "#E9F2FF" : "#fff", color: on ? "#405FF2" : "#3A4048",
+              toggle: () => this.setV({ options: on ? v.options.filter(x => x !== o) : [...v.options, o] }) };
+          })
+        };
+      }).filter(Boolean),
       tiers: tierDefs.map(t => ({ ...t, popular: !!t.popular, ring: tier === t.key ? "2px solid #405FF2" : "1px solid #E1E4EB", pick: () => this.setState({ tier: t.key }) })),
-      nextLabel: step === 3 ? "Pay & Publish →" : "Continue →",
+      nextLabel: step === 4 ? "Pay & Publish →" : "Continue →",
       backVis: step === 0 ? "hidden" : "visible",
       back: () => this.setState({ step: Math.max(0, step - 1) }),
-      next: () => step === 3 ? this.setState({ done: true }) : this.setState({ step: step + 1 }),
+      next: () => step === 4 ? this.setState({ done: true }) : this.setState({ step: step + 1 }),
       summaryName: (v.make || "car") + " " + (v.model || "") + " listing"
     };
   }
