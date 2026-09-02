@@ -62,6 +62,7 @@ a{color:#050B20;text-decoration:none}a:hover{color:#405FF2}
             </div>
             <span style="font-size:11px;font-weight:800;border-radius:99px;padding:5px 12px;background:{{ r.pillBg }};color:{{ r.pillFg }};flex-shrink:0">{{ r.status }}</span>
             <span onClick="{{ r.action }}" style="font-size:12.5px;font-weight:700;color:#405FF2;cursor:pointer;flex-shrink:0">{{ r.actionLabel }}</span>
+            <sc-if value="{{ r.canReview }}" hint-placeholder-val="{{ false }}"><span onClick="{{ r.review }}" style="font-size:12.5px;font-weight:700;color:{{ r.reviewColor }};cursor:pointer;flex-shrink:0">{{ r.reviewLabel }}</span></sc-if>
           </div>
         </sc-for>
         <sc-if value="{{ emptyTab }}" hint-placeholder-val="{{ false }}">
@@ -93,14 +94,39 @@ a{color:#050B20;text-decoration:none}a:hover{color:#405FF2}
       </div>
     </div>
   </div>
+  <!-- Review modal -->
+  <sc-if value="{{ modalOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeModal }}" style="position:fixed;inset:0;background:rgba(5,11,32,.55);z-index:100;display:flex;align-items:center;justify-content:center">
+      <div onClick="{{ stopProp }}" style="width:470px;max-width:92vw;background:#fff;border-radius:18px;padding:30px;box-shadow:0 30px 70px rgba(5,11,32,.3)">
+        <h2 style="font-size:20px;font-weight:800;letter-spacing:-0.4px;margin:0 0 4px">How did this listing go?</h2>
+        <div style="font-size:13px;color:#50565E;font-weight:600;margin-bottom:20px">{{ modalCar }} · your feedback improves the marketplace</div>
+        <div style="display:flex;gap:6px;margin-bottom:6px">
+          <sc-for list="{{ starBtns }}" as="s" hint-placeholder-count="5">
+            <span onClick="{{ s.pick }}" style="font-size:30px;cursor:pointer;color:{{ s.color }};line-height:1">★</span>
+          </sc-for>
+        </div>
+        <div style="font-size:12px;font-weight:700;color:#50565E;margin-bottom:18px;min-height:15px">{{ starHint }}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px">
+          <sc-for list="{{ tagChips }}" as="t" hint-placeholder-count="6">
+            <span onClick="{{ t.toggle }}" style="border:{{ t.ring }};background:{{ t.fill }};color:{{ t.color }};border-radius:99px;padding:7px 14px;font-size:12.5px;font-weight:600;cursor:pointer">{{ t.label }}</span>
+          </sc-for>
+        </div>
+        <textarea onChange="{{ setReviewText }}" value="{{ reviewText }}" placeholder="Anything else? (optional)" style="width:100%;min-height:70px;border:1px solid #E1E4EB;border-radius:10px;padding:11px 12px;font-size:13.5px;font-family:'Manrope',sans-serif;outline:none;box-sizing:border-box;resize:vertical;margin-bottom:18px"></textarea>
+        <div style="display:flex;gap:10px;justify-content:flex-end">
+          <span onClick="{{ closeModal }}" style="border:1.5px solid #C6CBD4;color:#50565E;font-size:13.5px;font-weight:700;border-radius:10px;padding:11px 20px;cursor:pointer">Skip</span>
+          <span onClick="{{ submitReview }}" style="background:{{ submitBg }};color:#fff;font-size:13.5px;font-weight:700;border-radius:10px;padding:12px 24px;cursor:pointer">Submit review</span>
+        </div>
+      </div>
+    </div>
+  </sc-if>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
-  state = { data: null, tab: "Active", bumped: [] };
+  state = { data: null, tab: "Active", bumped: [], reviews: {}, modal: { open: false, id: null, car: "", stars: 0, tags: [], text: "" } };
   componentDidMount() { import("./data.js").then(d => this.setState({ data: d })); }
   renderVals() {
-    const { data, tab, bumped } = this.state;
+    const { data, tab, bumped, reviews, modal } = this.state;
     const mine = data ? [
       { l: data.LISTINGS[0], status: "Active" }, { l: data.LISTINGS[4], status: "Active" },
       { l: data.LISTINGS[9], status: "Active" }, { l: data.LISTINGS[17], status: "Pending" },
@@ -116,10 +142,33 @@ class Component extends DCLogic {
       status: bumped.includes(m.l.id) && m.status === "Active" ? "Bumped" : m.status.toUpperCase(),
       pillBg: pills[m.status][0], pillFg: pills[m.status][1],
       actionLabel: bumped.includes(m.l.id) && m.status === "Active" ? "✓ Bumped to top" : actions[m.status],
-      action: () => m.status === "Active" && this.setState({ bumped: [...bumped, m.l.id] })
+      action: () => m.status === "Active" && this.setState({ bumped: [...bumped, m.l.id] }),
+      canReview: m.status === "Sold" || m.status === "Expired",
+      reviewLabel: reviews[m.l.id] ? "✓ Rated " + reviews[m.l.id].stars + "★" : "Rate experience",
+      reviewColor: reviews[m.l.id] ? "#2BB673" : "#B45309",
+      review: () => !reviews[m.l.id] && this.setState({ modal: { open: true, id: m.l.id, car: m.l.make + " " + m.l.model + " – " + m.l.year, stars: 0, tags: [], text: "" } })
     }));
+    const hints = ["", "Poor — tell us what went wrong", "Below expectations", "Okay", "Good experience", "Excellent — thanks!"];
+    const allTags = ["Sold quickly", "Fair listing fee", "Serious buyers", "Easy to create listing", "Too many lowball offers", "Slow to get views"];
     return {
       rows, emptyTab: data && rows.length === 0,
+      modalOpen: modal.open, modalCar: modal.car,
+      starBtns: [1, 2, 3, 4, 5].map(n => ({
+        color: n <= modal.stars ? "#F59E0B" : "#E1E4EB",
+        pick: () => this.setState({ modal: { ...modal, stars: n } })
+      })),
+      starHint: hints[modal.stars],
+      tagChips: allTags.map(label => {
+        const on = modal.tags.includes(label);
+        return { label, ring: on ? "1.5px solid #405FF2" : "1px solid #E1E4EB", fill: on ? "#E9F2FF" : "#fff", color: on ? "#405FF2" : "#3A4048",
+          toggle: () => this.setState({ modal: { ...modal, tags: on ? modal.tags.filter(x => x !== label) : [...modal.tags, label] } }) };
+      }),
+      reviewText: modal.text,
+      setReviewText: e => this.setState({ modal: { ...modal, text: e.target.value } }),
+      submitBg: modal.stars ? "#405FF2" : "#C6CBD4",
+      submitReview: () => modal.stars && this.setState({ reviews: { ...reviews, [modal.id]: { stars: modal.stars, tags: modal.tags, text: modal.text } }, modal: { ...modal, open: false } }),
+      closeModal: () => this.setState({ modal: { ...modal, open: false } }),
+      stopProp: e => e.stopPropagation(),
       tabs: ["Active", "Pending", "Expired", "Sold"].map(label => ({
         label: label + " (" + mine.filter(m => m.status === label).length + ")",
         bg: tab === label ? "#050B20" : "transparent", color: tab === label ? "#fff" : "#50565E",

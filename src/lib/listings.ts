@@ -55,6 +55,18 @@ export const OPTIONS = [
   "Apple CarPlay",
 ] as const;
 
+/** Feature catalog for the Sell wizard: [group name, description, items]. */
+export const FEATURES: ReadonlyArray<readonly [string, string, readonly string[]]> = [
+  ["Interior", "Choose interior comfort and trim elements, such as leather interior, sunroof.", ["Leather seats", "Partly leather", "Alcantara", "Sport seats", "Tinted windows", "Multifunctional steering wheel", "Heated seats", "Sunroof", "Electric seats", "Panoramic roof", "Auxiliary heating", "Ventilated seats", "Electric seats with memory", "Boot cover", "Heated steering wheel", "Massaging seats", "Two trunks", "Dual-pane glass"]],
+  ["Electronics", "Mark the devices that facilitate driving and everyday life – e.g., navigation, autopilot.", ["Electric mirrors", "Electric boot lid", "Automatic headlamps", "Electrically adjustable steering wheel", "Rainfall sensor", "Heated mirrors", "Dimming mirror", "Parking sensors", "Keyless entry system", "Cruise control", "Heated windshield", "Start-Stop system", "Voice commands", "Paddle shifters", "LCD monitor", "Navigation/GPS", "Head-Up display", "Digital driver display", "Wireless phone charger", "Touch screen", "Remote software update", "Virtual mirrors"]],
+  ["Security", "Introduce anti-theft measures – e.g. alarm system, immobilizer.", ["Immobilizer", "Alarm", "Satellite tracking system", "Armoured"]],
+  ["Audio/video equipment", "Indicate audio and video system elements – e.g., USB, Bluetooth, screens.", ["CD player", "MP3 player", "Additional audio equipment", "CD changer", "AUX input", "Subwoofer", "HiFi audio system", "DVD player", "USB input", "USB-C input", "Handsfree kit", "Apple CarPlay / Android Auto"]],
+  ["Exterior", "Exterior", ["Light alloy rims", "LED daytime running lights", "LED headlights", "Xenon lights", "Fog lights", "Tow hook", "Headlights washers", "Roof racks", "Automatic folding mirrors", "Set of winter tyres", "Soft close doors", "Matrix headlights"]],
+  ["Other features", "Additional information about the car – what is useful for the buyer to know, e.g., service book, spare tire.", ["Not registered in Lithuania", "Imported from US", "For exchange", "Available for leasing", "Service book", "Catalytic converter", "Multiple key sets", "Adapted for disabled people", "Increased engine power", "Prepared for motorsport", "Pneumatic suspension", "Spare wheel", "Remote start", "Remote climate control"]],
+  ["Safety", "Indicate safety equipment – e.g., distance maintenance system, ISOFIX mounting points.", ["Traction control system", "ESP", "Hill-start assist control", "Automated Parking", "Adaptive Cruise Control", "Blind Spot Detection", "Lane Departure Warning", "Night vision assist", "Road sign recognition", "ISOFIX mounts", "Collision prevention assist", "High beam assist", "Dynamic cornering lights", "Rear view camera", "Front view camera", "360° degree camera"]],
+  ["Features of electric cars", "Mark the features of the electric vehicle", ["Fast charging", "Three-phase charging", "Two-way energy transfer", "Heat pump", "Battery warranty", "APVA compensation has not been used"]],
+];
+
 export type Tier = "featured" | "plus" | "standard";
 export type Badge = "Great Price" | "Low Mileage";
 
@@ -74,6 +86,7 @@ export interface Listing {
   color: string;
   city: string;
   tier: Tier;
+  vin: string | null;
   status: string;
   isNew: boolean;
   negotiable: boolean;
@@ -118,6 +131,7 @@ const L = (
   color,
   city,
   tier,
+  vin: id % 4 === 2 ? null : "WAUZZZ4G" + String(70000000 + id * 5417).padStart(9, "0"),
   status: "active",
   isNew: km < 100,
   negotiable: true,

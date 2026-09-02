@@ -67,6 +67,9 @@ a{color:#050B20;text-decoration:none}a:hover{color:#405FF2}
           <div style="display:flex;flex-direction:column;gap:10px">
             <a href="{{ msgHref }}" style="display:block;text-align:center;background:#405FF2;color:#fff;font-size:14.5px;font-weight:700;border-radius:12px;padding:14px 0" style-hover="background:#2E4AD9;color:#fff">Message Seller</a>
             <span onClick="{{ revealPhone }}" style="display:block;text-align:center;border:1.5px solid #050B20;font-size:14.5px;font-weight:700;border-radius:12px;padding:13px 0;cursor:pointer">{{ phoneLabel }}</span>
+            <sc-if value="{{ vin }}" hint-placeholder-val="{{ false }}">
+              <a href="{{ vinHref }}" target="_blank" style="display:block;text-align:center;background:#EAF6EE;border:1px solid #CBE8D4;color:#1D7A4F;font-size:13px;font-weight:700;border-radius:12px;padding:12px 0" style-hover="background:#DFF2E6;color:#1D7A4F">✓ VIN verified — check vehicle history ↗</a>
+            </sc-if>
             <span onClick="{{ toggleSave }}" style="display:block;text-align:center;font-size:13.5px;font-weight:700;color:{{ saveColor }};cursor:pointer;padding:6px 0">{{ saveLabel }}</span>
           </div>
         </div>
@@ -130,6 +133,7 @@ class Component extends DCLogic {
       description: "Well maintained " + l.make + " " + l.model + " in " + l.color.toLowerCase() + ", full service history at an authorized dealer. Second owner, garage kept, no accidents. All maintenance done on schedule — recent brake pads and fresh oil service. TA valid until " + l.ta + ". Located in " + l.city + ", viewings welcome any day after 17:00.",
       optionChips: l.options,
       msgHref: "Messages.dc.html?listing=" + l.id,
+      vin: l.vin || false, vinHref: "https://autoistorija.lt/?vin=" + l.vin,
       phoneLabel: phoneShown ? "+370 612 34 567" : "Show Phone Number",
       revealPhone: () => this.setState({ phoneShown: true }),
       saveLabel: saved ? "♥ Saved" : "♡ Save listing",
